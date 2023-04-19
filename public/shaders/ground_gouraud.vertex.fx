@@ -29,7 +29,8 @@ out vec2 model_uv;
 out vec3 diffuse_illum;
 out vec3 specular_illum;
 
-void main() {
+void main()
+{
     // Get initial position of vertex (prior to height displacement)
     vec4 world_pos = world * vec4(position, 1.0);
 

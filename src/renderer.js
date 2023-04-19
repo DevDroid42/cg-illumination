@@ -31,7 +31,7 @@ class Renderer {
         this.scenes.forEach((scene, idx) => {
             scene.materials = material_callback(scene.scene);
             scene.ground_mesh = ground_mesh_callback(scene.scene, scene.ground_subdivisions);
-            this['createScene'+ idx](idx);
+            this['createScene' + idx](idx);
         });
     }
 
@@ -82,7 +82,7 @@ class Renderer {
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
         // Create other models
-        let sphere = CreateSphere('sphere', {segments: 32}, scene);
+        let sphere = CreateSphere('sphere', { segments: 32 }, scene);
         sphere.position = new Vector3(1.0, 0.5, 3.0);
         sphere.metadata = {
             mat_color: new Color3(0.10, 0.35, 0.88),
@@ -124,7 +124,7 @@ class Renderer {
     getActiveScene() {
         return this.scenes[this.active_scene].scene;
     }
-    
+
     setActiveScene(idx) {
         this.active_scene = idx;
     }
