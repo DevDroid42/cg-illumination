@@ -30,6 +30,8 @@ void main() {
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 
+    vec4 position = projection * view * world_pos;
+    position.y = -100.0;
     // Transform and project vertex from 3D world-space to 2D screen-space
-    gl_Position = projection * view * world_pos;
+    gl_Position = position;
 }

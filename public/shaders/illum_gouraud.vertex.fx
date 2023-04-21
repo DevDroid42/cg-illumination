@@ -32,8 +32,9 @@ void main()
     diffuse_illum = vec3(0.0, 0.0, 0.0);
     specular_illum = vec3(0.0, 0.0, 0.0);
     vec3 light_vector = light_positions[0] - position;
+    vec3 normalizedNormal = normalize(normal);
     light_vector = normalize(light_vector);
-    diffuse_illum = max(dot(normal, light_vector), 0.0) * light_colors[0];
+    diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 
