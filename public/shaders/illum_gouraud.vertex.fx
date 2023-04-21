@@ -26,11 +26,14 @@ out vec2 model_uv;
 out vec3 diffuse_illum;
 out vec3 specular_illum;
 
-void main() {
+void main()
+{
     // Pass diffuse and specular illumination onto the fragment shader
     diffuse_illum = vec3(0.0, 0.0, 0.0);
     specular_illum = vec3(0.0, 0.0, 0.0);
-
+    vec3 light_vector = light_positions[0] - position;
+    light_vector = normalize(light_vector);
+    diffuse_illum = max(dot(normal, light_vector), 0.0) * light_colors[0];
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 

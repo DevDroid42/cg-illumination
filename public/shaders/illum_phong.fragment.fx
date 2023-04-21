@@ -22,7 +22,9 @@ uniform vec3 light_colors[8]; // Ip
 // Output
 out vec4 FragColor;
 
-void main() {
+void main()
+{
     // Color
-    FragColor = vec4(mat_color * texture(mat_texture, model_uv).rgb, 1.0);
+    FragColor = vec4(0, 0, 0, 0)
+    // FragColor = vec4(mat_color * texture(mat_texture, model_uv).rgb * ambient, 1.0);
 }

@@ -20,7 +20,7 @@ export default {
             let basic_mat = new ShaderMaterial(name, scene, shader_path, {
                 attributes: ['position', 'normal', 'uv'],
                 uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess', 'texture_scale',
-                           'camera_position', 'ambient', 'num_lights', 'light_positions', 'light_colors'],
+                    'camera_position', 'ambient', 'num_lights', 'light_positions', 'light_colors'],
                 samplers: ['mat_texture']
             });
             basic_mat.backFaceCulling = true;
@@ -39,8 +39,8 @@ export default {
             let ground_mat = new ShaderMaterial(name, scene, shader_path, {
                 attributes: ['position', 'uv'],
                 uniforms: ['world', 'view', 'projection', 'mat_color', 'mat_specular', 'mat_shininess', 'ground_size',
-                           'height_scalar', 'texture_scale', 'camera_position', 'ambient', 'num_lights', 'light_positions',
-                           'light_colors'],
+                    'height_scalar', 'texture_scale', 'camera_position', 'ambient', 'num_lights', 'light_positions',
+                    'light_colors'],
                 samplers: ['mat_texture', 'heightmap']
             });
             ground_mat.backFaceCulling = false;
@@ -91,7 +91,7 @@ export default {
             let scene_idx = parseInt(event.target.value.substring(5));
             this.renderer.setActiveScene(scene_idx);
         },
-        
+
         selectShadingAlgorithm(event) {
             this.renderer.setShadingAlgorithm(event.target.value);
         },
@@ -163,14 +163,18 @@ export default {
         <label class="spaceRight" style="margin-left: 0.5rem;">{{ height_scale.toFixed(1) }}</label>
         <label for="lightIdx">Light: </label>
         <select v-if="renderer !== null" id="lightIdx" @change="selectLightIdx">
-            <option v-for="i in renderer.scenes[renderer.active_scene].lights.length" :value="'light' + (i - 1)">Light {{ i - 1 }}</option>
+            <option v-for="i in renderer.scenes[renderer.active_scene].lights.length" :value="'light' + (i - 1)">Light {{ i
+                - 1 }}</option>
         </select>
     </div>
     <canvas id="renderCanvas" touch-action="none"></canvas>
 </template>
 
 <style scoped>
-label, input, select, option {
+label,
+input,
+select,
+option {
     font-size: 1rem;
 }
 
@@ -181,5 +185,4 @@ label, input, select, option {
 
 .spaceRight {
     margin-right: 2rem;
-}
-</style>
+}</style>
