@@ -99,7 +99,7 @@ class Renderer {
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
             // ...
-
+            //console.log(current_scene.models[0].position);
             // update uniforms in shader programs
             this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
             this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
