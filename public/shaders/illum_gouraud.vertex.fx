@@ -36,9 +36,14 @@ void main()
     vec3 normalizedNormal = normalize(normal);
     light_vector = normalize(light_vector);
     diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
+    
+    vec3 V = normalize(camera_position - world_pos.xyz);
+    vec3 R = 2.0 * max(dot(normalizedNormal, light_vector), 0.0) * normalizedNormal - light_vector;
+    specular_illum = pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0];
+    
     //Pass vertex texcoord onto the fragment shader
     model_uv = uv;
-    model_uv = vec2(world_pos.x, world_pos.z);
+    // model_uv = vec2(world_pos.x, world_pos.z);
 
     // Transform and project vertex from 3D world-space to 2D screen-space
     gl_Position = projection * view * world_pos;
