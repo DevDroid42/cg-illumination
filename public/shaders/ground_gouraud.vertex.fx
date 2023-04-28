@@ -33,15 +33,39 @@ void main()
 {
     // Get initial position of vertex (prior to height displacement)
     vec4 world_pos = world * vec4(position, 1.0);
+    world_pos.y += (texture(heightmap, uv).x - 0.5) * 2.0;
+
+    vec3 neighbor1 = position;
+    neighbor1.x += 0.1;
+    vec2 neighbor1Sample = uv;
+    neighbor1Sample.x += (0.1 / ground_size.x);
+    neighbor1.y = texture(heightmap, neighbor1Sample).x;
+    
+    vec3 neighbor2 = position;
+    neighbor2.y += 0.1;
+    vec2 neighbor2Sample = uv;
+    neighbor2Sample.y += (0.1 / ground_size.y);
+    neighbor2.y = texture(heightmap, neighbor2Sample).x;
+
+    vec3 tangent = neighbor1 - position;
+    vec3 biTangent = neighbor2 - position;
+    vec3 normal = normalize(cross(tangent, biTangent));
 
     // Pass diffuse and specular illumination onto the fragment shader
     diffuse_illum = vec3(0.0, 0.0, 0.0);
     specular_illum = vec3(0.0, 0.0, 0.0);
+    vec3 light_vector = light_positions[0] - world_pos.xyz;
+    vec3 normalizedNormal = normalize(normal);
+    light_vector = normalize(light_vector);
+    diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
+    
+    vec3 V = normalize(camera_position - world_pos.xyz);
+    vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
+    specular_illum = pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0];
 
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
 
-    world_pos.y *= texture(heightmap, uv).x;
     // Transform and project vertex from 3D world-space to 2D screen-space
     gl_Position = projection * view * world_pos;
 }

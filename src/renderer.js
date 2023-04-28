@@ -74,7 +74,7 @@ class Renderer {
             mat_color: new Color3(0.10, 0.65, 0.15),
             mat_texture: white_texture,
             mat_specular: new Color3(0.0, 0.0, 0.0),
-            mat_shininess: 1,
+            mat_shininess: 100,
             texture_scale: new Vector2(1.0, 1.0),
             height_scalar: 1.0,
             heightmap: ground_heightmap
