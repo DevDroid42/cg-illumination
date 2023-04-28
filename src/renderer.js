@@ -82,7 +82,7 @@ class Renderer {
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
         // Create other models
-        let sphere = CreateSphere('sphere', { segments: 100 }, scene);
+        let sphere = CreateSphere('sphere', { segments: 10 }, scene);
         sphere.position = new Vector3(1.0, 0.5, 3.0);
         sphere.metadata = {
             mat_color: new Color3(0.10, 0.35, 0.88),

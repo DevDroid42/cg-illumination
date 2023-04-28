@@ -38,7 +38,7 @@ void main()
     diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
     
     vec3 V = normalize(camera_position - world_pos.xyz);
-    vec3 R = 2.0 * max(dot(normalizedNormal, light_vector), 0.0) * normalizedNormal - light_vector;
+    vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
     specular_illum = pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0];
     
     //Pass vertex texcoord onto the fragment shader
