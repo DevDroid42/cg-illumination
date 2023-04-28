@@ -42,7 +42,7 @@ void main()
     neighbor1.y = texture(heightmap, neighbor1Sample).x;
     
     vec3 neighbor2 = position;
-    neighbor2.y += 0.1;
+    neighbor2.z += 0.1;
     vec2 neighbor2Sample = uv;
     neighbor2Sample.y += (0.1 / ground_size.y);
     neighbor2.y = texture(heightmap, neighbor2Sample).x;
