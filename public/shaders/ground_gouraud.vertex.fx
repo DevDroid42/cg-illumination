@@ -39,17 +39,17 @@ void main()
     neighbor1.x += 0.1;
     vec2 neighbor1Sample = uv;
     neighbor1Sample.x += (0.1 / ground_size.x);
-    neighbor1.y = texture(heightmap, neighbor1Sample).x;
+    neighbor1.y = (texture(heightmap, neighbor1Sample).x - 0.5) * 2.0;
     
     vec3 neighbor2 = position;
     neighbor2.z += 0.1;
     vec2 neighbor2Sample = uv;
     neighbor2Sample.y += (0.1 / ground_size.y);
-    neighbor2.y = texture(heightmap, neighbor2Sample).x;
+    neighbor2.y = (texture(heightmap, neighbor2Sample).x - 0.5) * 2.0;
 
     vec3 tangent = neighbor1 - position;
     vec3 biTangent = neighbor2 - position;
-    vec3 normal = normalize(cross(tangent, biTangent));
+    vec3 normal = normalize(cross(biTangent, tangent));
 
     // Pass diffuse and specular illumination onto the fragment shader
     diffuse_illum = vec3(0.0, 0.0, 0.0);
@@ -57,7 +57,7 @@ void main()
     vec3 light_vector = light_positions[0] - world_pos.xyz;
     vec3 normalizedNormal = normalize(normal);
     light_vector = normalize(light_vector);
-    diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
+    //diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
     
     vec3 V = normalize(camera_position - world_pos.xyz);
     vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
@@ -65,6 +65,7 @@ void main()
 
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;
+    specular_illum = normal;
 
     // Transform and project vertex from 3D world-space to 2D screen-space
     gl_Position = projection * view * world_pos;
