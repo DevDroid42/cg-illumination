@@ -45,7 +45,7 @@ void main() {
     vec3 normal = normalize(cross(biTangent, tangent));
     model_normal = normal;
 
-    frag_pos = vec3(view * vec4(position, 1.0));
+    frag_pos = world_pos.xyz;
     // Pass vertex normal onto the fragment shader
     
     // Pass vertex texcoord onto the fragment shader
