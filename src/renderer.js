@@ -1,3 +1,4 @@
+import { KeyboardEventTypes } from '@babylonjs/core';
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
@@ -27,6 +28,8 @@ class Renderer {
         this.active_scene = 0;
         this.active_light = 0;
         this.shading_alg = 'gouraud';
+
+        this.lightSpeed = new Vector3(0, 0, 0);
 
         this.scenes.forEach((scene, idx) => {
             scene.materials = material_callback(scene.scene);
@@ -95,9 +98,72 @@ class Renderer {
         current_scene.models.push(sphere);
 
 
+        scene.onKeyboardObservable.add((kbInfo) => {
+            switch (kbInfo.type) {
+                case KeyboardEventTypes.KEYDOWN:
+                    switch (kbInfo.event.key) {
+                        case "a":
+                            this.lightSpeed.x = -5;
+                            break;
+                        case "d":
+                            this.lightSpeed.x = 5;
+                            break;
+                        case "r":
+                            this.lightSpeed.y = 5;
+                            break;
+                        case "f":
+                            this.lightSpeed.y = -5;
+                            break;
+                        case "w":
+                            this.lightSpeed.z = -5;
+                            break;
+                        case "s":
+                            this.lightSpeed.z = 5;
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log("KEY DOWN: ", kbInfo.event.key);
+                    break;
+                case KeyboardEventTypes.KEYUP:
+                    switch (kbInfo.event.key) {
+                        case "a":
+                            this.lightSpeed.x = 0;
+                            break;
+                        case "d":
+                            this.lightSpeed.x = 0;
+                            break;
+                        case "r":
+                            this.lightSpeed.y = 0;
+                            break;
+                        case "f":
+                            this.lightSpeed.y = 0;
+                            break;
+                        case "w":
+                            this.lightSpeed.z = 0;
+                            break;
+                        case "s":
+                            this.lightSpeed.z = 0;
+                            break;
+                        default:
+                            break;
+                    }
+                    console.log("KEY UP: ", kbInfo.event.code);
+                    break;
+                default:
+                    break;
+            }
+        });
+
         // Animation function - called before each frame gets rendered
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
+
+            //console.log(this.lightSpeed);
+            current_scene.lights[this.active_light].position.x += this.lightSpeed.x * scene.getAnimationRatio() / 60.0;
+            current_scene.lights[this.active_light].position.y += this.lightSpeed.y * scene.getAnimationRatio() / 60.0;
+            current_scene.lights[this.active_light].position.z += this.lightSpeed.z * scene.getAnimationRatio() / 60.0;
+
             // ...
             //console.log(current_scene.models[0].position);
             // update uniforms in shader programs

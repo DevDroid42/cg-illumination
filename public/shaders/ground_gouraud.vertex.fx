@@ -33,22 +33,23 @@ void main()
 {
     // Get initial position of vertex (prior to height displacement)
     vec4 world_pos = world * vec4(position, 1.0);
-    world_pos.y += (texture(heightmap, uv).x - 0.5) * 2.0 * height_scalar;
-
-    vec3 neighbor1 = position;
+    
+    vec3 neighbor1 = world_pos.xyz;
     neighbor1.x += 2.0;
     vec2 neighbor1Sample = uv;
     neighbor1Sample.x += (2.0 / ground_size.x);
     neighbor1.y = (texture(heightmap, neighbor1Sample).x - 0.5) * 2.0 * height_scalar;
     
-    vec3 neighbor2 = position;
+    vec3 neighbor2 = world_pos.xyz;
     neighbor2.z += 2.0;
     vec2 neighbor2Sample = uv;
     neighbor2Sample.y += (2.0 / ground_size.y);
     neighbor2.y = (texture(heightmap, neighbor2Sample).x - 0.5) * 2.0 * height_scalar;
 
-    vec3 tangent = neighbor1 - position;
-    vec3 biTangent = neighbor2 - position;
+    world_pos.y += (texture(heightmap, uv).x - 0.5) * 2.0 * height_scalar;
+
+    vec3 tangent = neighbor1 - world_pos.xyz;
+    vec3 biTangent = neighbor2 - world_pos.xyz;
     vec3 normal = normalize(cross(biTangent, tangent));
 
     // Pass diffuse and specular illumination onto the fragment shader
@@ -61,7 +62,7 @@ void main()
     
     vec3 V = normalize(camera_position - world_pos.xyz);
     vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
-    specular_illum = pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0];
+    specular_illum = min(pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0], 1.0);
 
     // Pass vertex texcoord onto the fragment shader
     model_uv = uv;

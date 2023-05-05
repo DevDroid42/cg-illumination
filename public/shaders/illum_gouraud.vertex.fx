@@ -39,7 +39,7 @@ void main()
     
     vec3 V = normalize(camera_position - world_pos.xyz);
     vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
-    specular_illum = pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0];
+    specular_illum = min(pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[0], 1.0);
     
     //Pass vertex texcoord onto the fragment shader
     model_uv = uv;
