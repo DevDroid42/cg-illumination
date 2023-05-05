@@ -17,8 +17,12 @@ uniform vec2 texture_scale;
 // Output
 out vec3 model_normal;
 out vec2 model_uv;
+out vec3 frag_pos;
 
 void main() {
+    vec4 world_pos = world * vec4(position, 1.0);
+    frag_pos = world_pos.xyz;
+    
     // Pass vertex normal onto the fragment shader
     model_normal = normal;
     // Pass vertex texcoord onto the fragment shader

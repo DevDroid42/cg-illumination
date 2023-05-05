@@ -3,6 +3,7 @@ precision mediump float;
 
 // Input
 in vec3 model_normal;
+in vec3 frag_pos;
 in vec2 model_uv;
 
 // Uniforms
@@ -25,11 +26,11 @@ out vec4 FragColor;
 void main()
 {
     vec3 N = normalize(model_normal);
-    vec3 view = normalize(camera_position - vec3(model_uv, 0.0));
+    vec3 view = normalize(camera_position - frag_pos);
 
     vec3 color = ambient * mat_color;
 
-    vec3 light_dir = normalize(light_positions[0] - vec3(model_uv, 0.0));
+    vec3 light_dir = normalize(light_positions[0] - frag_pos);
 
     float diffuse = max(dot(light_dir, N), 0.0);
     color += diffuse * light_colors[0] * mat_color;
