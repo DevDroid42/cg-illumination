@@ -72,13 +72,13 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(1.0, 1.0, 1.0);
-        light0.specular = new Color3(1.0, 1.0, 1.0);
+        light0.diffuse = new Color3(0.1, 1.0, 1.0);
+        light0.specular = new Color3(0.1, 1.0, 1.0);
         current_scene.lights.push(light0);
 
         let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
-        light1.diffuse = new Color3(1.0, 1.0, 1.0);
-        light1.specular = new Color3(1.0, 1.0, 1.0);
+        light1.diffuse = new Color3(1.0, 0.1, 0.1);
+        light1.specular = new Color3(1.0, 0.1, 0.1);
         current_scene.lights.push(light1);
 
         // Create ground mesh
@@ -86,7 +86,7 @@ class Renderer {
         let ground_heightmap = new Texture('/heightmaps/default.png', scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(0.10, 0.65, 0.15),
+            mat_color: new Color3(1, 1, 1),
             mat_texture: white_texture,
             mat_specular: new Color3(0.0, 0.0, 0.0),
             mat_shininess: 100,
