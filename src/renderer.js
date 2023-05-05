@@ -6,6 +6,7 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
+import { CreateBox} from '@babylonjs/core';
 
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
@@ -15,6 +16,17 @@ class Renderer {
             {
                 scene: new Scene(this.engine),
                 background_color: new Color4(0.1, 0.1, 0.1, 1.0),
+                materials: null,
+                ground_subdivisions: [50, 50],
+                ground_mesh: null,
+                camera: null,
+                ambient: new Color3(0.2, 0.2, 0.2),
+                lights: [],
+                models: []
+            },
+            {
+                scene: new Scene(this.engine),
+                background_color: new Color4(0.0, 0.5, 1.0, 0.15),
                 materials: null,
                 ground_subdivisions: [50, 50],
                 ground_mesh: null,
@@ -94,6 +106,91 @@ class Renderer {
         sphere.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(sphere);
 
+
+        // Animation function - called before each frame gets rendered
+        scene.onBeforeRenderObservable.add(() => {
+            // update models and lights here (if needed)
+            // ...
+            //console.log(current_scene.models[0].position);
+            // update uniforms in shader programs
+            this.updateShaderUniforms(scene_idx, materials['illum_' + this.shading_alg]);
+            this.updateShaderUniforms(scene_idx, materials['ground_' + this.shading_alg]);
+        });
+    }
+
+    createScene1(scene_idx) {
+        let current_scene = this.scenes[scene_idx];
+        let scene = current_scene.scene;
+        let materials = current_scene.materials;
+        let ground_mesh = current_scene.ground_mesh;
+
+        // Set scene-wide / environment values
+        scene.clearColor = current_scene.background_color;
+        scene.ambientColor = current_scene.ambient;
+        scene.useRightHandedSystem = true;
+
+        // Create camera
+        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 1.8, 10.0), scene);
+        current_scene.camera.setTarget(new Vector3(0.0, 1.8, 0.0));
+        current_scene.camera.upVector = new Vector3(0.0, 1.0, 0.0);
+        current_scene.camera.attachControl(this.canvas, true);
+        current_scene.camera.fov = 35.0 * (Math.PI / 180);
+        current_scene.camera.minZ = 0.1;
+        current_scene.camera.maxZ = 100.0;
+
+        // Create point light sources
+        let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
+        light0.diffuse = new Color3(1.0, 1.0, 1.0);
+        light0.specular = new Color3(1.0, 1.0, 1.0);
+        current_scene.lights.push(light0);
+
+        let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
+        light1.diffuse = new Color3(1.0, 0.0, 0.0);
+        light1.specular = new Color3(1.0, 1.0, 1.0);
+        current_scene.lights.push(light1);
+
+        // Create ground mesh
+        let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
+        let checkerboard = new Texture('/textures/wood.jpg', scene);
+        let ground_heightmap = new Texture('/heightmaps/newhieghtmap.png', scene);
+        ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
+        ground_mesh.metadata = {
+            mat_color: new Color3(0.10, 0.65, 0.15),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0),
+            height_scalar: 1.0,
+            heightmap: ground_heightmap
+        }
+        ground_mesh.material = materials['ground_' + this.shading_alg];
+
+        // Create other models
+        let box = CreateBox('box', { segments: 20 }, scene);
+        box.position = new Vector3(1.0, 2.0, 3.0);
+        box.metadata = {
+            mat_color: new Color3(0.99, 0.01, 0.01),
+            mat_texture: checkerboard,
+            mat_specular: new Color3(0.1, 0.1, 0.1),
+            mat_shininess: 20,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        box.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(box);
+
+        // Create other models
+        let sphere = CreateSphere('sphere', { segments: 10 }, scene);
+        sphere.position = new Vector3(8.0, 5.0, -8.0);
+        sphere.metadata = {
+            mat_color: new Color3(1.0, 1.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.8, 0.8, 0.8),
+            mat_shininess: 16,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        sphere.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(sphere);
+        
 
         // Animation function - called before each frame gets rendered
         scene.onBeforeRenderObservable.add(() => {
