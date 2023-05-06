@@ -9,6 +9,7 @@ import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
 import { CreateBox } from '@babylonjs/core';
+import { NoiseProceduralTexture } from '@babylonjs/core';
 
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
@@ -95,7 +96,7 @@ class Renderer {
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let ground_heightmap = new Texture('/heightmaps/default.png', scene);
+        let ground_heightmap = new NoiseProceduralTexture("perlin", 512, scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
             mat_color: new Color3(1, 1, 1),
