@@ -65,7 +65,7 @@ void main()
         diffuse_illum += max(dot(normalizedNormal, light_vector), 0.0) * light_colors[i] * light_multiplier;
         
         vec3 V = normalize(camera_position - world_pos.xyz);
-        vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
+        vec3 R = normalize(max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector);
         specular_illum += min(pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[i], 1.0);
     }
     //strange things seem to happen when specular is above 1

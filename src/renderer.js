@@ -1,4 +1,4 @@
-import { KeyboardEventTypes } from '@babylonjs/core';
+import { CreateCylinder, CreateRibbon, CreateTorusKnot, KeyboardEventTypes, Mesh } from '@babylonjs/core';
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
@@ -357,7 +357,7 @@ class Renderer {
         scene.useRightHandedSystem = true;
 
         // Create camera
-        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 1.8, 10.0), scene);
+        current_scene.camera = new UniversalCamera('camera', new Vector3(0.0, 1.8, 12.0), scene);
         current_scene.camera.setTarget(new Vector3(0.0, 1.8, 0.0));
         current_scene.camera.upVector = new Vector3(0.0, 1.0, 0.0);
         current_scene.camera.attachControl(this.canvas, true);
@@ -367,43 +367,141 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(0.1, 1.0, 1.0);
-        light0.specular = new Color3(0.1, 1.0, 1.0);
+        light0.diffuse = new Color3(1.0, 1.0, 1.0);
+        light0.specular = new Color3(1.0, 1.0, 1.0);
         current_scene.lights.push(light0);
-
-        let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
-        light1.diffuse = new Color3(1.0, 0.1, 0.1);
-        light1.specular = new Color3(1.0, 0.1, 0.1);
-        current_scene.lights.push(light1);
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let ground_heightmap = new Texture('/heightmaps/default.png', scene);
+        //let ground_heightmap = new Texture('/heightmaps/default.png', scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(1, 1, 1),
+            mat_color: new Color3(0, 1, 0),
             mat_texture: white_texture,
             mat_specular: new Color3(0.0, 0.0, 0.0),
             mat_shininess: 100,
             texture_scale: new Vector2(1.0, 1.0),
             height_scalar: 1.0,
-            heightmap: ground_heightmap
+            //heightmap: ground_heightmap
         }
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
-        // Create other models
-        let ring = this.createRing(32, 10, 10);
-        ring.position = new Vector3(1.0, 0.5, 3.0);
-        ring.metadata = {
-            mat_color: new Color3(0.10, 0.35, 0.88),
+        let head = CreateSphere('head', { segments: 20 }, scene);
+        head.position = new Vector3(0.0, 1.0, 3.0);
+        head.scaling = new Vector3(3.0, 3.0, 3.0);
+        head.metadata = {
+            mat_color: new Color3(1.0, 1.0, 0.0),
             mat_texture: white_texture,
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
             texture_scale: new Vector2(1.0, 1.0)
         }
-        ring.material = materials['illum_' + this.shading_alg];
-        current_scene.models.push(ring);
+        head.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(head);
 
+        let lefteye = CreateSphere('left', { segments: 20 }, scene);
+        lefteye.position = new Vector3(-0.5, 1.75, 4.0);
+        lefteye.scaling = new Vector3(0.5, 0.5, 0.5);
+        lefteye.metadata = {
+            mat_color: new Color3(0.0, 0.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        lefteye.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(lefteye);
+
+        let righteye = CreateSphere('right', { segments: 20 }, scene);
+        righteye.position = new Vector3(0.5, 1.75, 4.0);
+        righteye.scaling = new Vector3(0.5, 0.5, 0.5);
+        righteye.metadata = {
+            mat_color: new Color3(0.0, 0.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        righteye.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(righteye);
+
+        let base = CreateCylinder('base', { segments: 20 }, scene);
+        base.position = new Vector3(0.0, 2.2, 3.0);
+        base.scaling = new Vector3(3.0, 0.1, 3.0);
+        base.metadata = {
+            mat_color: new Color3(1.0, 0.0, 1.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        base.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(base);
+
+        let top = CreateCylinder('top', { segments: 20 }, scene);
+        top.position = new Vector3(0.0, 3.0, 3.0);
+        top.scaling = new Vector3(1.8, 1.0, 1.8);
+        top.metadata = {
+            mat_color: new Color3(1.0, 0.0, 1.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        top.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(top);
+
+        let leftarm = CreateBox('leftarm', { segments: 20 }, scene);
+        leftarm.position = new Vector3(0.0, 1.2, 3.0);
+        leftarm.scaling = new Vector3(5.0, 0.5, 0.5);
+        leftarm.metadata = {
+            mat_color: new Color3(1.0, 1.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        leftarm.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(leftarm);
+
+        let leftleg = CreateBox('leftleg', { segments: 20 }, scene);
+        leftleg.position = new Vector3(-0.5, 0.5, 3.0);
+        leftleg.scaling = new Vector3(0.5, 4.0, 0.5);
+        leftleg.metadata = {
+            mat_color: new Color3(1.0, 1.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        leftleg.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(leftleg);
+
+        let rightleg = CreateBox('rightleg', { segments: 20 }, scene);
+        rightleg.position = new Vector3(0.5, 0.5, 3.0);
+        rightleg.scaling = new Vector3(0.5, 4.0, 0.5);
+        rightleg.metadata = {
+            mat_color: new Color3(1.0, 1.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        rightleg.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(rightleg);
+
+        let mouth = CreateBox('mouth', { segments: 20 }, scene);
+        mouth.position = new Vector3(0.0, 0.5, 4.4);
+        mouth.scaling = new Vector3(2.0, 0.2, 0.2);
+        mouth.metadata = {
+            mat_color: new Color3(1.0, 0.0, 0.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        mouth.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(mouth);
 
         scene.onKeyboardObservable.add((kbInfo) => {
             switch (kbInfo.type) {
