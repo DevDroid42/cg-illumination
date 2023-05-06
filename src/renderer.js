@@ -122,9 +122,9 @@ class Renderer {
         current_scene.models.push(sphere);
 
         // Create other models
-
-        let ring = this.CreateRing(32, 1, 1);
-        ring.position = new Vector3(1.0, 0.5, 3.0);
+        
+        let ring = this.CreateRing(32, 5, 5, scene);
+        ring.position = new Vector3(1.0, 2.5, 3.0);
         ring.metadata = {
             mat_color: new Color3(0.10, 0.35, 0.88),
             mat_texture: white_texture,
@@ -134,7 +134,7 @@ class Renderer {
         }
         ring.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(ring);
-
+        
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
@@ -655,7 +655,7 @@ class Renderer {
         this.active_light = idx;
     }
 
-    createRing(segments, radiusInner, radiusOuter) {
+    CreateRing(segments, radiusInner, radiusOuter, scene) {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
             const angle = (i / segments) * Math.PI * 2;
@@ -679,7 +679,7 @@ class Renderer {
         vertexData.indices = indices;
         vertexData.normals = normals;
 
-        const mesh = new Mesh('ring', this.current_scene);
+        const mesh = new Mesh('ring', scene);
         vertexData.applyToMesh(mesh);
         return mesh;
     }
