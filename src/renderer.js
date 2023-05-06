@@ -133,8 +133,8 @@ class Renderer {
         current_scene.models.push(sphere);
 
         // Create other models
-
-        let ring = this.CreateRing(20, 3, 4, scene);
+        
+        let ring = this.CreateSaturn(scene);
         ring.position = new Vector3(1.0, 2.5, 3.0);
         ring.metadata = {
             mat_color: new Color3(0.10, 0.35, 0.88),
@@ -145,7 +145,7 @@ class Renderer {
         }
         ring.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(ring);
-
+        
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
@@ -687,7 +687,7 @@ class Renderer {
         console.log(idx);
         this.active_light = idx;
     }
-
+    /*
     CreateRing(segments, radiusInner, radiusOuter, scene) {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
@@ -700,16 +700,18 @@ class Renderer {
         vertices.push(vertices[0]); // Close the ring
       
         const indices = [];
-        const vertexCount = vertices.length;
-        const normals = [];
+        //const vertexCount = vertices.length;
+        //let normals = [];
+        
         for (let i = 0; i < vertexCount - 1; i++) {
             //const normal = new Vector3();
             VertexData.ComputeNormals(vertices[i], vertices[i + 1], vertices[i + 2], normals);
             normals.push(normals.x, normals.y, normals.z);
-          }
+        }
+        
       
-        //const normals = [];
-        //VertexData.ComputeNormals(vertices, indices, normals);
+        const normals = [];
+        VertexData.ComputeNormals(vertices, indices, normals);
       
         const vertexData = new VertexData();
         vertexData.positions = vertices.flatMap((v) => [v.x, v.y, v.z]);
@@ -720,7 +722,8 @@ class Renderer {
         vertexData.applyToMesh(mesh);
         return mesh;
       }
-      /*
+      */
+      
       CreateSaturn(scene) {
         // create a new VertexData object
         let vertexData = new VertexData();
@@ -771,7 +774,7 @@ class Renderer {
             indices.push(second, second + 1, first + 1);
           }
         }
-        /*
+        
         // create the vertices of the rings
         for (let lat = 0; lat <= nbSegments; lat++) {
           let theta = lat * Math.PI / nbSegments;
@@ -827,7 +830,7 @@ class Renderer {
         saturnMesh.position = new Vector3(0, 0, 0);
         return saturnMesh;
         }
-    */
+    
 }
 
 export { Renderer }
