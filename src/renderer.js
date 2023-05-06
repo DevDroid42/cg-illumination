@@ -122,7 +122,7 @@ class Renderer {
         current_scene.models.push(sphere);
 
         // Create other models
-        
+
         let ring = this.CreateRing(32, 5, 5, scene);
         ring.position = new Vector3(1.0, 2.5, 3.0);
         ring.metadata = {
@@ -134,7 +134,7 @@ class Renderer {
         }
         ring.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(ring);
-        
+
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
@@ -400,13 +400,24 @@ class Renderer {
         light3.specular = new Color3(0.0, 1.0, 1.0);
         current_scene.lights.push(light3);
 
+        let light4 = new PointLight('light4', new Vector3(7.0, 1.0, -5.0), scene);
+        light4.diffuse = new Color3(0, 3.0, 3.0);
+        light4.specular = new Color3(0.0, 1.0, 1.0);
+        current_scene.lights.push(light4);
+
+        let light5 = new PointLight('light5', new Vector3(-7.0, 1.0, -5.0), scene);
+        light5.diffuse = new Color3(3.0, 3.0, 0);
+        light5.specular = new Color3(0.0, 1.0, 1.0);
+        current_scene.lights.push(light5);
+
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
+        let illusion_texture = new Texture('heightmaps/illusion.jpg', scene);
         let ground_heightmap = new Texture('/heightmaps/newhieghtmap.png', scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
-            mat_color: new Color3(0, 1, 0),
-            mat_texture: white_texture,
+            mat_color: new Color3(1, 1, 1),
+            mat_texture: illusion_texture,
             mat_specular: new Color3(0.0, 0.0, 0.0),
             mat_shininess: 100,
             texture_scale: new Vector2(1.0, 1.0),
