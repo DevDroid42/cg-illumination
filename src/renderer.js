@@ -2,6 +2,8 @@ import { KeyboardEventTypes } from '@babylonjs/core';
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
+import { Mesh } from '@babylonjs/core';
+import { VertexData } from '@babylonjs/core';
 import { CreateSphere } from '@babylonjs/core/Meshes/Builders/sphereBuilder';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
@@ -390,17 +392,17 @@ class Renderer {
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
         // Create other models
-        let sphere = CreateSphere('sphere', { segments: 10 }, scene);
-        sphere.position = new Vector3(1.0, 0.5, 3.0);
-        sphere.metadata = {
-            mat_color: new Color3(0.10, 0.35, 0.88),
+        let pyramid = this.createPyramid();
+        pyramid.position = new Vector3(1.0, 0.5, 3.0);
+        pyramid.metadata = {
+            mat_color: new Color3(0.93, 0.89, 0.45),
             mat_texture: white_texture,
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
             texture_scale: new Vector2(1.0, 1.0)
         }
-        sphere.material = materials['illum_' + this.shading_alg];
-        current_scene.models.push(sphere);
+        pyramid.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(pyramid);
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
@@ -524,6 +526,44 @@ class Renderer {
     setActiveLight(idx) {
         console.log(idx);
         this.active_light = idx;
+    }
+
+    createPyramid() {
+        // Set up the pyramid
+        const height = 2;
+        const baseSize = 2;
+        const vertices = [
+            new Vector3(-baseSize / 2, 0, -baseSize / 2),
+            new Vector3(-baseSize / 2, 0, baseSize / 2),
+            new Vector3(baseSize / 2, 0, baseSize / 2),
+            new Vector3(baseSize / 2, 0, -baseSize / 2),
+            new Vector3(0, height, 0)
+        ];
+        const indices = [
+            0, 1, 4,
+            1, 2, 4,
+            2, 3, 4,
+            3, 0, 4,
+            2, 1, 0,
+            3, 2, 0
+        ];
+
+        var pyramid = new Mesh("custom", this.current_scene);
+
+        //Empty array to contain calculated values or normals added
+        var normals = [];
+
+        //Calculations of normals added
+        VertexData.ComputeNormals(vertices, indices, normals);
+
+        var vertexData = new VertexData();
+
+        vertexData.positions = vertices.map(v => v.x).concat(vertices.map(v => v.y)).concat(vertices.map(v => v.z));
+        vertexData.indices = indices;
+        vertexData.normals = normals; //Assignment of normal to vertexData added
+
+        vertexData.applyToMesh(pyramid);
+        return pyramid;
     }
 }
 
