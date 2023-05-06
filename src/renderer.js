@@ -1,4 +1,4 @@
-import { CreateCylinder, CreateRibbon, CreateTorusKnot, KeyboardEventTypes, Mesh } from '@babylonjs/core';
+import { CreateCylinder, CreateRibbon, CreateTorusKnot, KeyboardEventTypes, Mesh, StandardMaterial } from '@babylonjs/core';
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
@@ -124,7 +124,7 @@ class Renderer {
 
         // Create other models
 
-        let ring = this.CreateRing(32, 5, 5, scene);
+        let ring = this.CreateRing(20, 3, 4, scene);
         ring.position = new Vector3(1.0, 2.5, 3.0);
         ring.metadata = {
             mat_color: new Color3(0.10, 0.35, 0.88),
@@ -670,31 +670,143 @@ class Renderer {
     CreateRing(segments, radiusInner, radiusOuter, scene) {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
-            const angle = (i / segments) * Math.PI * 2;
-            const x = Math.cos(angle);
-            const y = Math.sin(angle);
-            vertices.push(new Vector3(x * radiusInner, 0, y * radiusInner));
-            vertices.push(new Vector3(x * radiusOuter, 0, y * radiusOuter));
+          const angle = (i / segments) * Math.PI * 2;
+          const x = Math.cos(angle);
+          const y = Math.sin(angle);
+          vertices.push(new Vector3(x * radiusInner, 0, y * radiusInner));
+          vertices.push(new Vector3(x * radiusOuter, 0, y * radiusOuter));
         }
         vertices.push(vertices[0]); // Close the ring
+      
         const indices = [];
-        for (let i = 0; i < segments; i++) {
-            const j = i * 2;
-            indices.push(j, (j + 1), (j + 3));
-            indices.push(j, (j + 3), (j + 2));
-        }
-
+        const vertexCount = vertices.length;
         const normals = [];
-        VertexData.ComputeNormals(vertices, indices, normals);
+        for (let i = 0; i < vertexCount - 1; i++) {
+            //const normal = new Vector3();
+            VertexData.ComputeNormals(vertices[i], vertices[i + 1], vertices[i + 2], normals);
+            normals.push(normals.x, normals.y, normals.z);
+          }
+      
+        //const normals = [];
+        //VertexData.ComputeNormals(vertices, indices, normals);
+      
         const vertexData = new VertexData();
-        vertexData.positions = vertices.map(v => v.x).concat(vertices.map(v => v.y)).concat(vertices.map(v => v.z));
+        vertexData.positions = vertices.flatMap((v) => [v.x, v.y, v.z]);
         vertexData.indices = indices;
         vertexData.normals = normals;
-
-        const mesh = new Mesh('ring', scene);
+      
+        const mesh = new Mesh("ring", scene);
         vertexData.applyToMesh(mesh);
         return mesh;
-    }
+      }
+      /*
+      CreateSaturn(scene) {
+        // create a new VertexData object
+        let vertexData = new VertexData();
+      
+        // define the number of vertices and indices needed for the planet and rings
+        let nbSegments = 64;
+        let nbVertices = (nbSegments + 1) * (nbSegments + 1);
+        //let nbIndices = nbSegments * nbSegments * 6;
+      
+        // create empty arrays to hold the positions, normals, and indices of the vertices
+        let positions = [];
+        let normals = [];
+        let indices = [];
+      
+        // define the parameters of the planet and rings
+        let planetRadius = 2;
+        let ringInnerRadius = 3;
+        let ringOuterRadius = 4;
+        let ringThickness = 0.2;
+      
+        // create the vertices of the planet and rings
+        for (let lat = 0; lat <= nbSegments; lat++) {
+          let theta = lat * Math.PI / nbSegments;
+          let sinTheta = Math.sin(theta);
+          let cosTheta = Math.cos(theta);
+      
+          for (let lon = 0; lon <= nbSegments; lon++) {
+            let phi = lon * 2 * Math.PI / nbSegments;
+            let sinPhi = Math.sin(phi);
+            let cosPhi = Math.cos(phi);
+      
+            let x = cosPhi * sinTheta;
+            let y = cosTheta;
+            let z = sinPhi * sinTheta;
+      
+            positions.push(x * planetRadius, y * planetRadius, z * planetRadius);
+            normals.push(x, y, z);
+          }
+        }
+      
+        // create the indices of the triangles that make up the planet
+        for (let lat = 0; lat < nbSegments; lat++) {
+          for (let lon = 0; lon < nbSegments; lon++) {
+            let first = (lat * (nbSegments + 1)) + lon;
+            let second = first + nbSegments + 1;
+      
+            indices.push(first, second, first + 1);
+            indices.push(second, second + 1, first + 1);
+          }
+        }
+        /*
+        // create the vertices of the rings
+        for (let lat = 0; lat <= nbSegments; lat++) {
+          let theta = lat * Math.PI / nbSegments;
+          let sinTheta = Math.sin(theta);
+          let cosTheta = Math.cos(theta);
+      
+          for (let lon = 0; lon <= nbSegments; lon++) {
+            let phi = lon * 2 * Math.PI / nbSegments;
+            let sinPhi = Math.sin(phi);
+            let cosPhi = Math.cos(phi);
+      
+            let x = cosPhi * sinTheta;
+            let y = cosTheta;
+            let z = sinPhi * sinTheta;
+      
+            positions.push(x * (ringInnerRadius + ringThickness), y * (ringInnerRadius + ringThickness), z * (ringInnerRadius + ringThickness));
+            normals.push(x, y, z);
+      
+            positions.push(x * (ringOuterRadius + ringThickness), y * (ringOuterRadius + ringThickness), z * (ringOuterRadius + ringThickness));
+            normals.push(x, y, z);
+          }
+        }
+      
+        // create the indices of the triangles that make up the rings
+        for (let lat = 0; lat < nbSegments; lat++) {
+          for (let lon = 0; lon < nbSegments; lon++) {
+            let first = (lat * (nbSegments + 1)) + lon + nbVertices;
+            let second = first + nbSegments + 1;
+
+            indices.push(first, second, first + 1);
+            indices.push(second, second + 1, first + 1);
+            }
+        }
+        
+        // set the data for the VertexData object
+        vertexData.positions = positions;
+        vertexData.normals = normals;
+        vertexData.indices = indices;
+
+        // create a new Mesh object from the VertexData
+        let saturnMesh = new Mesh("Saturn", scene);
+        vertexData.applyToMesh(saturnMesh, false);
+
+        // set the material for the Mesh object
+        let saturnMaterial = new StandardMaterial("SaturnMaterial", scene);
+        saturnMaterial.diffuseTexture = new Texture("https://i.imgur.com/31bsxv8.jpg", scene);
+        saturnMaterial.specularColor = new Color3(0, 0, 0);
+        saturnMaterial.emissiveColor = new Color3(0.2, 0.2, 0.2);
+        saturnMaterial.backFaceCulling = false;
+        saturnMesh.material = saturnMaterial;
+
+        // set the position of the Mesh object
+        saturnMesh.position = new Vector3(0, 0, 0);
+        return saturnMesh;
+        }
+    */
 }
 
 export { Renderer }
