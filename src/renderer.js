@@ -122,7 +122,7 @@ class Renderer {
         current_scene.models.push(sphere);
 
         // Create other models
-        /*
+
         let ring = this.CreateRing(32, 1, 1);
         ring.position = new Vector3(1.0, 0.5, 3.0);
         ring.metadata = {
@@ -134,7 +134,7 @@ class Renderer {
         }
         ring.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(ring);
-        */
+
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
