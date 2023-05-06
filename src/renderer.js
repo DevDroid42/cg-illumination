@@ -392,17 +392,17 @@ class Renderer {
         ground_mesh.material = materials['ground_' + this.shading_alg];
 
         // Create other models
-        let pyramid = this.createPyramid();
-        pyramid.position = new Vector3(1.0, 0.5, 3.0);
-        pyramid.metadata = {
-            mat_color: new Color3(0.93, 0.89, 0.45),
+        let ring = this.createRing(32, 10, 10);
+        ring.position = new Vector3(1.0, 0.5, 3.0);
+        ring.metadata = {
+            mat_color: new Color3(0.10, 0.35, 0.88),
             mat_texture: white_texture,
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
             texture_scale: new Vector2(1.0, 1.0)
         }
-        pyramid.material = materials['illum_' + this.shading_alg];
-        current_scene.models.push(pyramid);
+        ring.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(ring);
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
@@ -528,42 +528,33 @@ class Renderer {
         this.active_light = idx;
     }
 
-    createPyramid() {
-        // Set up the pyramid
-        const height = 2;
-        const baseSize = 2;
-        const vertices = [
-            new Vector3(-baseSize / 2, 0, -baseSize / 2),
-            new Vector3(-baseSize / 2, 0, baseSize / 2),
-            new Vector3(baseSize / 2, 0, baseSize / 2),
-            new Vector3(baseSize / 2, 0, -baseSize / 2),
-            new Vector3(0, height, 0)
-        ];
-        const indices = [
-            0, 1, 4,
-            1, 2, 4,
-            2, 3, 4,
-            3, 0, 4,
-            2, 1, 0,
-            3, 2, 0
-        ];
+    createRing(segments, radiusInner, radiusOuter) {
+        const vertices = [];
+        for (let i = 0; i < segments; i++) {
+            const angle = (i / segments) * Math.PI * 2;
+            const x = Math.cos(angle);
+            const y = Math.sin(angle);
+            vertices.push(new Vector3(x * radiusInner, 0, y * radiusInner));
+            vertices.push(new Vector3(x * radiusOuter, 0, y * radiusOuter));
+        }
+        vertices.push(vertices[0]); // Close the ring
+        const indices = [];
+        for (let i = 0; i < segments; i++) {
+            const j = i * 2;
+            indices.push(j, (j + 1), (j + 3));
+            indices.push(j, (j + 3), (j + 2));
+        }
 
-        var pyramid = new Mesh("custom", this.current_scene);
-
-        //Empty array to contain calculated values or normals added
-        var normals = [];
-
-        //Calculations of normals added
+        const normals = [];
         VertexData.ComputeNormals(vertices, indices, normals);
-
-        var vertexData = new VertexData();
-
+        const vertexData = new VertexData();
         vertexData.positions = vertices.map(v => v.x).concat(vertices.map(v => v.y)).concat(vertices.map(v => v.z));
         vertexData.indices = indices;
-        vertexData.normals = normals; //Assignment of normal to vertexData added
+        vertexData.normals = normals;
 
-        vertexData.applyToMesh(pyramid);
-        return pyramid;
+        const mesh = new Mesh('ring', this.current_scene);
+        vertexData.applyToMesh(mesh);
+        return mesh;
     }
 }
 
