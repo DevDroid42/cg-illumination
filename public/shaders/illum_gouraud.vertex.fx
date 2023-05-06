@@ -28,18 +28,22 @@ out vec3 specular_illum;
 
 void main()
 {
+    vec4 world_pos = world * vec4(position, 1.0);
     // Pass diffuse and specular illumination onto the fragment shader
     diffuse_illum = vec3(0.0, 0.0, 0.0);
     specular_illum = vec3(0.0, 0.0, 0.0);
-    vec4 world_pos = world * vec4(position, 1.0);
-    vec3 light_vector = light_positions[0] - world_pos.xyz;
-    vec3 normalizedNormal = normalize(normal);
-    light_vector = normalize(light_vector);
-    diffuse_illum = max(dot(normalizedNormal, light_vector), 0.0) * light_colors[0];
-    
-    vec3 specular_view = normalize(camera_position - world_pos.xyz);
-    vec3 reflection = reflect(-light_vector, normalizedNormal);
-    specular_illum = min(pow(max(dot(specular_view, reflection), 0.0), mat_shininess) * light_colors[0], 1.0);
+    for(int i = 0; i <= num_lights; i++){
+        vec3 light_vector = light_positions[i] - world_pos.xyz;
+        vec3 normalizedNormal = normalize(normal);
+        light_vector = normalize(light_vector);
+        diffuse_illum += max(dot(normalizedNormal, light_vector), 0.0) * light_colors[i];
+        
+        vec3 specular_view = normalize(camera_position - world_pos.xyz);
+        vec3 reflection = reflect(-light_vector, normalizedNormal);
+        specular_illum += min(pow(max(dot(specular_view, reflection), 0.0), mat_shininess) * light_colors[i], 1.0);
+    }
+    //strange things happen when specular is above 1
+    specular_illum = min(specular_illum, vec3(1));
     
     //Pass vertex texcoord onto the fragment shader
     model_uv = uv;
