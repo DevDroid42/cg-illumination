@@ -56,10 +56,13 @@ void main()
     diffuse_illum = vec3(0.0, 0.0, 0.0);
     specular_illum = vec3(0.0, 0.0, 0.0);
     for(int i = 0; i < num_lights; i++){
+        float light_distance = distance(light_positions[i], world_pos.xyz);
+        float light_multiplier = min(2.0/light_distance, 1.0);
+
         vec3 light_vector = light_positions[i] - world_pos.xyz;
         vec3 normalizedNormal = normalize(normal);
         light_vector = normalize(light_vector);
-        diffuse_illum += max(dot(normalizedNormal, light_vector), 0.0) * light_colors[i];
+        diffuse_illum += max(dot(normalizedNormal, light_vector), 0.0) * light_colors[i] * light_multiplier;
         
         vec3 V = normalize(camera_position - world_pos.xyz);
         vec3 R = max(2.0 * dot(normalizedNormal, light_vector) * normalizedNormal, 0.0) - light_vector;
