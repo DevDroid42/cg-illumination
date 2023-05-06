@@ -30,10 +30,13 @@ void main()
 
     vec3 color = ambient * mat_color;
     for(int i = 0; i < num_lights; i++){
+        float light_distance = distance(light_positions[i], frag_pos.xyz);
+        float light_multiplier = min(2.0/light_distance, 1.0);
+
         vec3 light_dir = normalize(light_positions[i] - frag_pos);
 
         float diffuse = max(dot(light_dir, N), 0.0);
-        color += diffuse * light_colors[i] * mat_color;
+        color += diffuse * light_colors[i] * mat_color * light_multiplier;
 
         vec3 reflection = reflect(-light_dir, N);
         float specular = pow(max(dot(view, reflection), 0.0), mat_shininess);
