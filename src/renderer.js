@@ -2,7 +2,6 @@ import { CreateCylinder, CreateRibbon, CreateTorusKnot, KeyboardEventTypes, Mesh
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
-import { Mesh } from '@babylonjs/core';
 import { VertexData } from '@babylonjs/core';
 import { CreateSphere } from '@babylonjs/core/Meshes/Builders/sphereBuilder';
 import { Texture } from '@babylonjs/core/Materials/Textures/texture';
@@ -121,6 +120,21 @@ class Renderer {
         }
         sphere.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(sphere);
+
+        // Create other models
+        /*
+        let ring = this.CreateRing(32, 1, 1);
+        ring.position = new Vector3(1.0, 0.5, 3.0);
+        ring.metadata = {
+            mat_color: new Color3(0.10, 0.35, 0.88),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.8, 0.8, 0.8),
+            mat_shininess: 16,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        ring.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(ring);
+        */
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
