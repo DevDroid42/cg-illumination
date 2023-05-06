@@ -85,14 +85,24 @@ class Renderer {
 
         // Create point light sources
         let light0 = new PointLight('light0', new Vector3(1.0, 1.0, 5.0), scene);
-        light0.diffuse = new Color3(0.1, 1.0, 1.0);
+        light0.diffuse = new Color3(0.1, 1.0, 1.1);
         light0.specular = new Color3(0.1, 1.0, 1.0);
         current_scene.lights.push(light0);
 
         let light1 = new PointLight('light1', new Vector3(0.0, 3.0, 0.0), scene);
-        light1.diffuse = new Color3(1.0, 0.1, 0.1);
+        light1.diffuse = new Color3(1.1, 0.1, 0.1);
         light1.specular = new Color3(1.0, 0.1, 0.1);
         current_scene.lights.push(light1);
+
+        let light3 = new PointLight('light3', new Vector3(-5.0, 1.0, -4.0), scene);
+        light3.diffuse = new Color3(0.1, 1.0, 1.1);
+        light3.specular = new Color3(0.1, 1.0, 1.0);
+        current_scene.lights.push(light3);
+
+        let light4 = new PointLight('light4', new Vector3(5.0, 1.0, -4.0), scene);
+        light4.diffuse = new Color3(0.1, 1.0, 1.1);
+        light4.specular = new Color3(0.1, 1.0, 1.0);
+        current_scene.lights.push(light4);
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
@@ -195,6 +205,7 @@ class Renderer {
             }
         });
 
+        let time = 0;
         // Animation function - called before each frame gets rendered
         scene.onBeforeRenderObservable.add(() => {
             // update models and lights here (if needed)
@@ -203,6 +214,16 @@ class Renderer {
             current_scene.lights[this.active_light].position.x += this.lightSpeed.x * scene.getAnimationRatio() / 60.0;
             current_scene.lights[this.active_light].position.y += this.lightSpeed.y * scene.getAnimationRatio() / 60.0;
             current_scene.lights[this.active_light].position.z += this.lightSpeed.z * scene.getAnimationRatio() / 60.0;
+            time += scene.deltaTime;
+
+            const lightCount = current_scene.lights.length;
+            for (let i = 0; i < lightCount; i++) {
+                const light = current_scene.lights[i];
+                light.diffuse = new Color3(
+                    (Math.sin(time / 3000.0 + (i / lightCount) * Math.PI) + 1) / 1.8,
+                    (Math.sin(time / 3000 + Math.PI / 3.0 + (i / lightCount) * Math.PI) + 1) / 1.8,
+                    (Math.sin(time / 3000 + Math.PI / 3.0 * 2 + (i / lightCount) * Math.PI) + 1) / 1.8);
+            }
 
             // ...
             //console.log(current_scene.models[0].position);
