@@ -1,4 +1,4 @@
-import { CreateCylinder, CreateRibbon, CreateTorusKnot, KeyboardEventTypes, Mesh, StandardMaterial } from '@babylonjs/core';
+import { CreateCylinder, KeyboardEventTypes, Mesh, NoiseProceduralTexture, Axis, CreateBox } from '@babylonjs/core';
 import { Scene } from '@babylonjs/core/scene';
 import { UniversalCamera } from '@babylonjs/core/Cameras/universalCamera';
 import { PointLight } from '@babylonjs/core/Lights/pointLight';
@@ -8,8 +8,6 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture';
 import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
-import { CreateBox } from '@babylonjs/core';
-import { NoiseProceduralTexture } from '@babylonjs/core';
 
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
@@ -121,9 +119,9 @@ class Renderer {
 
         // Create other models
         let sphere = CreateSphere('sphere', { segments: 10 }, scene);
-        sphere.position = new Vector3(1.0, 2.5, 3.0);
+        sphere.position = new Vector3(0, 2.5, 0);
         sphere.metadata = {
-            mat_color: new Color3(0.10, 0.35, 0.88),
+            mat_color: new Color3(0.3, 0.8, 1),
             mat_texture: white_texture,
             mat_specular: new Color3(0.8, 0.8, 0.8),
             mat_shininess: 16,
@@ -133,9 +131,9 @@ class Renderer {
         current_scene.models.push(sphere);
 
         // Create other models
-        
+        //let illusion_texture = new Texture('heightmaps/illusion.jpg', scene);
         let ring = this.CreateDonut(1.5, 0.3, 50, 50, scene);
-        ring.position = new Vector3(1.0, 2.5, 3.0);
+        ring.position = new Vector3(0, 2.5, 0);
         ring.metadata = {
             mat_color: new Color3(1.0, 1.0, 1.0),
             mat_texture: white_texture,
@@ -224,6 +222,10 @@ class Renderer {
                     (Math.sin(time / 3000 + Math.PI / 3.0 + (i / lightCount) * Math.PI) + 1) / 1.8,
                     (Math.sin(time / 3000 + Math.PI / 3.0 * 2 + (i / lightCount) * Math.PI) + 1) / 1.8);
             }
+
+            ring.rotate(Axis.Y, Math.sin(time / 3000.0 + Math.PI / 3) / 50.0);
+            ring.rotate(Axis.X, Math.sin(time / 3000.0 + Math.PI / 2) / 50.0);
+            ring.rotate(Axis.Z, Math.sin(time / 3000.0) / 50.0);
 
             // ...
             //console.log(current_scene.models[0].position);
@@ -713,75 +715,75 @@ class Renderer {
         console.log(idx);
         this.active_light = idx;
     }
-      
-    
+
+
     CreateDonut(radius, tubeRadius, radialSegments, tubularSegments, scene) {
         // Initialize arrays for vertex data
         let positions = [];
         let indices = [];
         let normals = [];
         let uvs = [];
-          
+
         // Generate vertex data for donut shape
         for (let i = 0; i <= radialSegments; i++) {
             let angle = i * Math.PI * 2 / radialSegments;
-          let cosAngle = Math.cos(angle);
-          let sinAngle = Math.sin(angle);
-          
-          for (let j = 0; j <= tubularSegments; j++) {
-            let tubularAngle = j * Math.PI * 2 / tubularSegments;
-            let cosTubular = Math.cos(tubularAngle);
-            let sinTubular = Math.sin(tubularAngle);
-          
-            let x = (radius + tubeRadius * cosTubular) * cosAngle;
-            let y = (radius + tubeRadius * cosTubular) * sinAngle;
-            let z = tubeRadius * sinTubular;
-          
-            positions.push(x, y, z);
-          
-            let nx = cosAngle * cosTubular;
-            let ny = sinAngle * cosTubular;
-            let nz = sinTubular;
-          
-            normals.push(nx, ny, nz);
-          
-            let u = j / tubularSegments;
-            let v = i / radialSegments;
-          
-            uvs.push(u, v);
-          }
+            let cosAngle = Math.cos(angle);
+            let sinAngle = Math.sin(angle);
+
+            for (let j = 0; j <= tubularSegments; j++) {
+                let tubularAngle = j * Math.PI * 2 / tubularSegments;
+                let cosTubular = Math.cos(tubularAngle);
+                let sinTubular = Math.sin(tubularAngle);
+
+                let x = (radius + tubeRadius * cosTubular) * cosAngle;
+                let y = (radius + tubeRadius * cosTubular) * sinAngle;
+                let z = tubeRadius * sinTubular;
+
+                positions.push(x, y, z);
+
+                let nx = cosAngle * cosTubular;
+                let ny = sinAngle * cosTubular;
+                let nz = sinTubular;
+
+                normals.push(nx, ny, nz);
+
+                let u = j / tubularSegments;
+                let v = i / radialSegments;
+
+                uvs.push(u, v);
+            }
         }
-          
+
         // Generate indices for donut shape
         for (let i = 0; i < radialSegments; i++) {
-          for (let j = 0; j < tubularSegments; j++) {
-            let a = i * (tubularSegments + 1) + j;
-            let b = a + tubularSegments + 1;
-            let c = a + 1;
-            let d = b + 1;
-          
-            indices.push(a, b, c);
-            indices.push(b, d, c);
-          }
+            for (let j = 0; j < tubularSegments; j++) {
+                let a = i * (tubularSegments + 1) + j;
+                let b = a + tubularSegments + 1;
+                let c = a + 1;
+                let d = b + 1;
+
+                indices.push(a, b, c);
+                indices.push(b, d, c);
+            }
         }
-          
+
         // Create vertex data object
         let vertexData = new VertexData();
-          
+
         // Set vertex data arrays
         vertexData.positions = positions;
         vertexData.indices = indices;
         vertexData.normals = normals;
         vertexData.uvs = uvs;
-          
+
         // Create mesh object using vertex data
         let donut = new Mesh("donut", scene);
         vertexData.applyToMesh(donut);
-          
-            // Return mesh object
+
+        // Return mesh object
         return donut;
-      }
-    
+    }
+
 }
 
 export { Renderer }
