@@ -145,7 +145,7 @@ class Renderer {
         }
         ring.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(ring);
-        
+
 
 
         scene.onKeyboardObservable.add((kbInfo) => {
