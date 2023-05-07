@@ -565,6 +565,32 @@ class Renderer {
         mouth.material = materials['illum_' + this.shading_alg];
         current_scene.models.push(mouth);
 
+        let lefttooth = CreateBox('lefttooth', { segments: 20 }, scene);
+        lefttooth.position = new Vector3(-0.3, 0.25, 4.4);
+        lefttooth.scaling = new Vector3(0.2, 0.3, 0.2);
+        lefttooth.metadata = {
+            mat_color: new Color3(1.0, 1.0, 1.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        lefttooth.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(lefttooth);
+
+        let righttooth = CreateBox('righttooth', { segments: 20 }, scene);
+        righttooth.position = new Vector3(0.3, 0.25, 4.4);
+        righttooth.scaling = new Vector3(0.2, 0.3, 0.2);
+        righttooth.metadata = {
+            mat_color: new Color3(1.0, 1.0, 1.0),
+            mat_texture: white_texture,
+            mat_specular: new Color3(0.0, 0.0, 0.0),
+            mat_shininess: 100,
+            texture_scale: new Vector2(1.0, 1.0)
+        }
+        righttooth.material = materials['illum_' + this.shading_alg];
+        current_scene.models.push(righttooth);
+
         scene.onKeyboardObservable.add((kbInfo) => {
             switch (kbInfo.type) {
                 case KeyboardEventTypes.KEYDOWN:
