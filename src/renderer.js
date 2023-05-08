@@ -9,6 +9,8 @@ import { RawTexture } from '@babylonjs/core/Materials/Textures/rawTexture';
 import { Color3, Color4 } from '@babylonjs/core/Maths/math.color';
 import { Vector2, Vector3 } from '@babylonjs/core/Maths/math.vector';
 
+const BASE_URL = import.meta.env.BASE_URL || '/';
+
 class Renderer {
     constructor(canvas, engine, material_callback, ground_mesh_callback) {
         this.canvas = canvas;
@@ -268,8 +270,8 @@ class Renderer {
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let checkerboard = new Texture('/textures/wood.jpg', scene);
-        let ground_heightmap = new Texture('/heightmaps/newhieghtmap.png', scene);
+        let checkerboard = new Texture(BASE_URL + '/textures/wood.jpg', scene);
+        let ground_heightmap = new Texture(BASE_URL + '/heightmaps/newhieghtmap.png', scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
             mat_color: new Color3(0.10, 0.65, 0.15),
@@ -436,8 +438,8 @@ class Renderer {
 
         // Create ground mesh
         let white_texture = RawTexture.CreateRGBTexture(new Uint8Array([255, 255, 255]), 1, 1, scene);
-        let illusion_texture = new Texture('heightmaps/illusion.jpg', scene);
-        let ground_heightmap = new Texture('/heightmaps/newhieghtmap.png', scene);
+        let illusion_texture = new Texture(BASE_URL + 'heightmaps/illusion.jpg', scene);
+        let ground_heightmap = new Texture(BASE_URL + '/heightmaps/newhieghtmap.png', scene);
         ground_mesh.scaling = new Vector3(20.0, 1.0, 20.0);
         ground_mesh.metadata = {
             mat_color: new Color3(1, 1, 1),
