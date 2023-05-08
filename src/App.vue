@@ -126,10 +126,10 @@ export default {
 
         // Create our Renderer
         this.renderer = new Renderer(canvas, engine, (scene) => {
-            let illum_gouraud = this.createBasicMaterial('illum_gouraud', BASE_URL + '/shaders/illum_gouraud', scene);
-            let illum_phong = this.createBasicMaterial('illum_phong', BASE_URL + '/shaders/illum_phong', scene);
-            let ground_gouraud = this.createGroundMaterial('ground_gouraud', BASE_URL + '/shaders/ground_gouraud', scene);
-            let ground_phong = this.createGroundMaterial('ground_phong', BASE_URL + '/shaders/ground_phong', scene);
+            let illum_gouraud = this.createBasicMaterial('illum_gouraud', BASE_URL + 'shaders/illum_gouraud', scene);
+            let illum_phong = this.createBasicMaterial('illum_phong', BASE_URL + 'shaders/illum_phong', scene);
+            let ground_gouraud = this.createGroundMaterial('ground_gouraud', BASE_URL + 'shaders/ground_gouraud', scene);
+            let ground_phong = this.createGroundMaterial('ground_phong', BASE_URL + 'shaders/ground_phong', scene);
             return {
                 illum_gouraud: illum_gouraud,
                 illum_phong: illum_phong,

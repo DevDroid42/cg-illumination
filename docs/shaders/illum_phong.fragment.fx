@@ -38,9 +38,9 @@ void main()
         float diffuse = max(dot(light_dir, N), 0.0);
         color += diffuse * light_colors[i] * mat_color * light_multiplier;
 
-        vec3 V = normalize(camera_position - frag_pos);
-        vec3 R = normalize(max(2.0 * dot(N, light_dir) * N, 0.0) - light_dir);
-        color += min(pow(max(dot(R, V), 0.0), mat_shininess) * light_colors[i], 1.0);
+        vec3 reflection = reflect(-light_dir, N);
+        float specular = pow(max(dot(view, reflection), 0.0), mat_shininess);
+        color += specular * light_colors[i] * mat_specular;
     }
     // Color
     FragColor = vec4(color * texture(mat_texture, model_uv).rgb, 1.0);
